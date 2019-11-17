@@ -42,11 +42,10 @@ def ohkm(loss, top_k, cfg):
     ohkm_loss /= cfg.IMAGES_PER_GPU
     return ohkm_loss
 
-
 def refine_net_loss(refine_out, label, valids, cfg, name):
     def refine_net_loss_tf(cfg, refine_out, label, valids):
         refine_loss = tf.reduce_mean(tf.square(refine_out - label), (1,2)) * tf.to_float((tf.greater(valids, 0.1)))
-        # refine_loss = ohkm(refine_loss, 8, cfg)
+        #refine_loss = ohkm(refine_loss, 8, cfg)
         refine_loss = ohkm(refine_loss, 3, cfg)
         return refine_loss
     return KL.Lambda(lambda x: refine_net_loss_tf(cfg, *x), name=name)([refine_out, label, valids])

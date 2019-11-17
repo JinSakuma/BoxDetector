@@ -8,6 +8,7 @@ Modified By Longqi-S
 import os
 import glob
 import datetime
+import json
 import re
 import logging
 from collections import OrderedDict
@@ -98,7 +99,6 @@ class CPN():
                 shape=[config.KEYPOINTS_NUM],
                 name="input_valids", dtype=tf.float32)
             input_labels = [input_heatmaps15, input_heatmaps11, input_heatmaps9, input_heatmaps7]
-
         if 'resnet' in config.BACKBONE:
             from lib.nets import resnet_backbone as backbone
             _, C2, C3, C4, C5 = backbone.resnet_graph(input_image, config.BACKBONE, stage5=True)
@@ -254,7 +254,8 @@ class CPN():
 
         # In multi-GPU training, we wrap the model. Get layers
         # of the inner model because they have the weights.
-        layers = keras_model.inner_model.layers if hasattr(keras_model, "inner_model") else keras_model.layers
+        layers = keras_model.inner_model.layers if hasattr(keras_model, "inner_model")\
+            else keras_model.layers
 
         for layer in layers:
             # Is the layer a model?
@@ -275,7 +276,8 @@ class CPN():
                 layer.trainable = trainable
             # Print trainble layer names
             if trainable and verbose > 0:
-                log("{}{:20}   ({})".format(" " * indent, layer.name, layer.__class__.__name__))
+                log("{}{:20}   ({})".format(" " * indent, layer.name,
+                                            layer.__class__.__name__))
 
     def set_log_dir(self, model_path=None):
         """Sets the model log directory and epoch counter.

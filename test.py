@@ -8,7 +8,7 @@ import configs
 import keras.backend as K
 from tqdm import tqdm
 from preprocessing.box_dataset import preprocessing
-from models import cpn as modellib
+from models import box_cpn as modellib
 
 
 def save_result(img, landmark, path):
@@ -32,8 +32,8 @@ def save_result(img, landmark, path):
     cv2.line(copy2, (landmark[6][1], landmark[6][0]), (landmark[3][1], landmark[3][0]), (0, 255, 0), 3)
 
     name = path.split(".")
-    path1 = "."+name[1]+"_plot."+name[2]
-    path2 = "."+name[1]+"_grid."+name[2]
+    path1 = name[0]+"_plot."+name[-1]
+    path2 = name[0]+"_grid."+name[-1]
     print(path1, path2)
     cv2.imwrite(path1, copy)
     cv2.imwrite(path2, copy2)
@@ -171,6 +171,6 @@ if __name__ == '__main__':
         path = imgs_path + "/" + name
         img = cv2.imread(path)
         resized = resize(img)
-        test(model, img, resized, config, args.save_path+"/"+name)
+        test(model, img, resized, config, os.path.join(args.save_path, name))
 
     print('finished!!')
